@@ -1,104 +1,148 @@
-import React from "react";
-import { Stack, Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform } from "react-native";
-import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
 
-const ICON_COLOR = "#007AFF";
+import React, { useState, useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  ScrollView,
+  Platform,
+  Pressable,
+} from 'react-native';
+import { Stack } from 'expo-router';
+import { colors } from '@/styles/commonStyles';
+import { IconSymbol } from '@/components/IconSymbol';
+import SampleCard, { Sample } from '@/components/SampleCard';
+import FilterBar from '@/components/FilterBar';
+import { SAMPLE_DATA } from '@/data/sampleData';
+import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen() {
-  const theme = useTheme();
-  const modalDemos = [
-    {
-      title: "Standard Modal",
-      description: "Full screen modal presentation",
-      route: "/modal",
-      color: "#007AFF",
-    },
-    {
-      title: "Form Sheet",
-      description: "Bottom sheet with detents and grabber",
-      route: "/formsheet",
-      color: "#34C759",
-    },
-    {
-      title: "Transparent Modal",
-      description: "Overlay without obscuring background",
-      route: "/transparent-modal",
-      color: "#FF9500",
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedEra, setSelectedEra] = useState<string | null>(null);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+
+  const filteredSamples = useMemo(() => {
+    let filtered = SAMPLE_DATA;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (sample) =>
+          sample.title.toLowerCase().includes(query) ||
+          sample.artist.toLowerCase().includes(query)
+      );
     }
-  ];
 
-  const renderModalDemo = ({ item }: { item: (typeof modalDemos)[0] }) => (
-    <GlassView style={[
-      styles.demoCard,
-      Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-    ]} glassEffectStyle="regular">
-      <View style={[styles.demoIcon, { backgroundColor: item.color }]}>
-        <IconSymbol name="square.grid.3x3" color="white" size={24} />
-      </View>
-      <View style={styles.demoContent}>
-        <Text style={[styles.demoTitle, { color: theme.colors.text }]}>{item.title}</Text>
-        <Text style={[styles.demoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>{item.description}</Text>
-      </View>
-      <Link href={item.route as any} asChild>
-        <Pressable>
-          <GlassView style={[
-            styles.tryButton,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
-          ]} glassEffectStyle="clear">
-            <Text style={[styles.tryButtonText, { color: theme.colors.primary }]}>Try It</Text>
-          </GlassView>
-        </Pressable>
-      </Link>
-    </GlassView>
-  );
+    // Filter by era
+    if (selectedEra) {
+      const startYear = parseInt(selectedEra);
+      const endYear = startYear + 9;
+      filtered = filtered.filter(
+        (sample) => sample.year >= startYear && sample.year <= endYear
+      );
+    }
 
-  const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="plus" color={theme.colors.primary} />
-    </Pressable>
-  );
+    // Filter by genre
+    if (selectedGenre) {
+      filtered = filtered.filter((sample) => sample.genre === selectedGenre);
+    }
 
-  const renderHeaderLeft = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol
-        name="gear"
-        color={theme.colors.primary}
-      />
-    </Pressable>
-  );
+    return filtered;
+  }, [searchQuery, selectedEra, selectedGenre]);
+
+  const handleClearSearch = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSearchQuery('');
+  };
+
+  const handleClearFilters = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSelectedEra(null);
+    setSelectedGenre(null);
+    setSearchQuery('');
+  };
+
+  const hasActiveFilters = selectedEra || selectedGenre || searchQuery.trim();
 
   return (
     <>
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Building the app...",
-            headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
+            title: 'Sample Finder',
+            headerStyle: {
+              backgroundColor: colors.background,
+            },
+            headerTintColor: colors.text,
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <FlatList
-          data={modalDemos}
-          renderItem={renderModalDemo}
-          keyExtractor={(item) => item.route}
+      <View style={styles.container}>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchInputContainer}>
+            <IconSymbol name="magnifyingglass" size={20} color={colors.textSecondary} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search samples or artists..."
+              placeholderTextColor={colors.textSecondary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <Pressable onPress={handleClearSearch}>
+                <IconSymbol name="xmark.circle.fill" size={20} color={colors.textSecondary} />
+              </Pressable>
+            )}
+          </View>
+        </View>
+
+        {/* Filter Bar */}
+        <FilterBar
+          selectedEra={selectedEra}
+          selectedGenre={selectedGenre}
+          onEraChange={setSelectedEra}
+          onGenreChange={setSelectedGenre}
+        />
+
+        {/* Results Header */}
+        <View style={styles.resultsHeader}>
+          <Text style={styles.resultsCount}>
+            {filteredSamples.length} {filteredSamples.length === 1 ? 'sample' : 'samples'}
+          </Text>
+          {hasActiveFilters && (
+            <Pressable onPress={handleClearFilters} style={styles.clearButton}>
+              <Text style={styles.clearButtonText}>Clear All</Text>
+            </Pressable>
+          )}
+        </View>
+
+        {/* Sample List */}
+        <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={[
             styles.listContainer,
-            Platform.OS !== 'ios' && styles.listContainerWithTabBar
+            Platform.OS !== 'ios' && styles.listContainerWithTabBar,
           ]}
-          contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
-        />
+        >
+          {filteredSamples.length > 0 ? (
+            filteredSamples.map((sample) => (
+              <SampleCard key={sample.id} sample={sample} />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <IconSymbol name="music.note.list" size={64} color={colors.textSecondary} />
+              <Text style={styles.emptyStateTitle}>No samples found</Text>
+              <Text style={styles.emptyStateText}>
+                Try adjusting your search or filters
+              </Text>
+            </View>
+          )}
+        </ScrollView>
       </View>
     </>
   );
@@ -107,55 +151,76 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor handled dynamically
+    backgroundColor: colors.background,
   },
-  listContainer: {
-    paddingVertical: 16,
+  searchContainer: {
     paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: colors.background,
   },
-  listContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
-  },
-  demoCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 8,
   },
-  demoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text,
+    padding: 0,
+  },
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  demoContent: {
+  resultsCount: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  clearButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: colors.card,
+  },
+  clearButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  scrollView: {
     flex: 1,
   },
-  demoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
-    // color handled dynamically
-  },
-  demoDescription: {
-    fontSize: 14,
-    lineHeight: 18,
-    // color handled dynamically
-  },
-  headerButtonContainer: {
-    padding: 6,
-  },
-  tryButton: {
+  listContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
+    paddingBottom: 16,
   },
-  tryButtonText: {
-    fontSize: 14,
+  listContainerWithTabBar: {
+    paddingBottom: 100,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    gap: 12,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
     fontWeight: '600',
-    // color handled dynamically
+    color: colors.text,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 });

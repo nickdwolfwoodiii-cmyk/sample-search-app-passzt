@@ -1,14 +1,15 @@
+
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#162456',    // Material Blue
-  secondary: '#193cb8',  // Darker Blue
-  accent: '#64B5F6',     // Light Blue
-  background: '#101824',  // Keeping dark background
-  backgroundAlt: '#162133',  // Keeping dark background
-  text: '#e3e3e3',       // Keeping light text
-  grey: '#90CAF9',       // Light Blue Grey
-  card: '#193cb8',       // Keeping dark card background
+  background: '#121212',
+  text: '#FFFFFF',
+  textSecondary: '#A0A0A0',
+  primary: '#FF4081',
+  secondary: '#64B5F6',
+  accent: '#FFD740',
+  card: '#1E1E1E',
+  highlight: '#B3E5FC',
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -18,7 +19,7 @@ export const buttonStyles = StyleSheet.create({
     width: '100%',
   },
   backButton: {
-    backgroundColor: colors.backgroundAlt,
+    backgroundColor: colors.card,
     alignSelf: 'center',
     width: '100%',
   },
@@ -71,8 +72,8 @@ export const commonStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: colors.backgroundAlt,
-    borderColor: colors.grey,
+    backgroundColor: colors.card,
+    borderColor: colors.textSecondary,
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,

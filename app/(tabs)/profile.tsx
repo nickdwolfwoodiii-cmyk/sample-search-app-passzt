@@ -1,91 +1,146 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
+
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
+import { Stack } from 'expo-router';
+import { colors } from '@/styles/commonStyles';
+import { IconSymbol } from '@/components/IconSymbol';
 
 export default function ProfileScreen() {
-  const theme = useTheme();
-
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={[
-          styles.contentContainer,
-          Platform.OS !== 'ios' && styles.contentContainerWithTabBar
-        ]}
-      >
-        <GlassView style={[
-          styles.profileHeader,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <IconSymbol name="person.circle.fill" size={80} color={theme.colors.primary} />
-          <Text style={[styles.name, { color: theme.colors.text }]}>John Doe</Text>
-          <Text style={[styles.email, { color: theme.dark ? '#98989D' : '#666' }]}>john.doe@example.com</Text>
-        </GlassView>
+    <>
+      {Platform.OS === 'ios' && (
+        <Stack.Screen
+          options={{
+            title: 'Profile',
+            headerStyle: {
+              backgroundColor: colors.background,
+            },
+            headerTintColor: colors.text,
+          }}
+        />
+      )}
+      <View style={styles.container}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            Platform.OS !== 'ios' && styles.scrollContentWithTabBar,
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <View style={styles.avatarContainer}>
+              <IconSymbol name="person.circle.fill" size={80} color={colors.primary} />
+            </View>
+            <Text style={styles.name}>Beat Maker</Text>
+            <Text style={styles.subtitle}>Hip-Hop Producer</Text>
+          </View>
 
-        <GlassView style={[
-          styles.section,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <View style={styles.infoRow}>
-            <IconSymbol name="phone.fill" size={20} color={theme.dark ? '#98989D' : '#666'} />
-            <Text style={[styles.infoText, { color: theme.colors.text }]}>+1 (555) 123-4567</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>About</Text>
+            <View style={styles.card}>
+              <Text style={styles.cardText}>
+                Welcome to Sample Finder - your ultimate tool for discovering classic soul, funk, jazz, and R&B samples for hip-hop production.
+              </Text>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <IconSymbol name="location.fill" size={20} color={theme.dark ? '#98989D' : '#666'} />
-            <Text style={[styles.infoText, { color: theme.colors.text }]}>San Francisco, CA</Text>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Features</Text>
+            <View style={styles.card}>
+              <View style={styles.featureItem}>
+                <IconSymbol name="magnifyingglass" size={24} color={colors.secondary} />
+                <Text style={styles.featureText}>Search thousands of classic samples</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <IconSymbol name="music.note" size={24} color={colors.secondary} />
+                <Text style={styles.featureText}>Preview samples directly from YouTube</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <IconSymbol name="link" size={24} color={colors.secondary} />
+                <Text style={styles.featureText}>Copy YouTube links instantly</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <IconSymbol name="slider.horizontal.3" size={24} color={colors.secondary} />
+                <Text style={styles.featureText}>Filter by era and genre</Text>
+              </View>
+            </View>
           </View>
-        </GlassView>
-      </ScrollView>
-    </SafeAreaView>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Tips</Text>
+            <View style={styles.card}>
+              <Text style={styles.cardText}>
+                • Tap on any sample card to expand and preview the track{'\n'}
+                • Use the era filters to find samples from specific decades{'\n'}
+                • Filter by genre to narrow down your search{'\n'}
+                • Copy the YouTube link to save samples for later
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    // backgroundColor handled dynamically
-  },
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
-  contentContainer: {
-    padding: 20,
+  scrollContent: {
+    padding: 16,
+    gap: 24,
   },
-  contentContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
+  scrollContentWithTabBar: {
+    paddingBottom: 100,
   },
-  profileHeader: {
+  header: {
     alignItems: 'center',
-    borderRadius: 12,
-    padding: 32,
-    marginBottom: 16,
-    gap: 12,
+    paddingVertical: 24,
+    gap: 8,
+  },
+  avatarContainer: {
+    marginBottom: 8,
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
-    // color handled dynamically
+    fontWeight: '700',
+    color: colors.text,
   },
-  email: {
+  subtitle: {
     fontSize: 16,
-    // color handled dynamically
+    color: colors.textSecondary,
   },
   section: {
-    borderRadius: 12,
-    padding: 20,
     gap: 12,
   },
-  infoRow: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    gap: 16,
+  },
+  cardText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+  },
+  featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  infoText: {
+  featureText: {
+    flex: 1,
     fontSize: 16,
-    // color handled dynamically
+    color: colors.text,
   },
 });
