@@ -27,7 +27,7 @@ export default function SampleCard({ sample }: SampleCardProps) {
     const youtubeUrl = `https://www.youtube.com/watch?v=${sample.videoId}`;
     Clipboard.setString(youtubeUrl);
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert('Copied!', 'YouTube link copied to clipboard');
+    Alert.alert('Copied!', 'YouTube link copied to clipboard', [{ text: 'OK' }]);
   };
 
   const handleToggleExpand = async () => {
@@ -43,7 +43,7 @@ export default function SampleCard({ sample }: SampleCardProps) {
             <IconSymbol name="music.note" size={24} color={colors.primary} />
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={styles.title} numberOfLines={2}>
               {sample.title}
             </Text>
             <Text style={styles.artist} numberOfLines={1}>
@@ -67,10 +67,12 @@ export default function SampleCard({ sample }: SampleCardProps) {
       {isExpanded && (
         <View style={styles.expandedContent}>
           <YouTubePlayer videoId={sample.videoId} height={200} />
-          <Pressable style={styles.copyButton} onPress={handleCopyLink}>
-            <IconSymbol name="link" size={20} color={colors.text} />
-            <Text style={styles.copyButtonText}>Copy YouTube Link</Text>
-          </Pressable>
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.copyButton} onPress={handleCopyLink}>
+              <IconSymbol name="link" size={20} color={colors.text} />
+              <Text style={styles.copyButtonText}>Copy Link</Text>
+            </Pressable>
+          </View>
         </View>
       )}
     </View>
@@ -143,7 +145,12 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     gap: 12,
   },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   copyButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

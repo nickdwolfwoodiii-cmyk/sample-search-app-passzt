@@ -13,12 +13,13 @@ export interface FilterBarProps {
 
 const ERAS = [
   { label: 'All', value: null },
-  { label: '60s', value: '1960s' },
-  { label: '70s', value: '1970s' },
-  { label: '80s', value: '1980s' },
-  { label: '90s', value: '1990s' },
-  { label: '00s', value: '2000s' },
-  { label: '10s', value: '2010s' },
+  { label: '60s', value: '1960' },
+  { label: '70s', value: '1970' },
+  { label: '80s', value: '1980' },
+  { label: '90s', value: '1990' },
+  { label: '00s', value: '2000' },
+  { label: '10s', value: '2010' },
+  { label: '20s', value: '2020' },
 ];
 
 const GENRES = [
@@ -29,6 +30,8 @@ const GENRES = [
   { label: 'Blues', value: 'Blues' },
   { label: 'R&B', value: 'R&B' },
   { label: 'Rock', value: 'Rock' },
+  { label: 'Disco', value: 'Disco' },
+  { label: 'Gospel', value: 'Gospel' },
 ];
 
 export default function FilterBar({
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: colors.textSecondary,
     paddingHorizontal: 16,
