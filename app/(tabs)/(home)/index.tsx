@@ -18,6 +18,7 @@ import FilterBar from '@/components/FilterBar';
 import { SAMPLE_DATA } from '@/data/sampleData';
 import { searchYouTube } from '@/utils/youtubeApi';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,6 +124,34 @@ export default function HomeScreen() {
         />
       )}
       <View style={styles.container}>
+        {/* Animated Background */}
+        <LinearGradient
+          colors={[
+            `${colors.primary}15`,
+            `${colors.background}00`,
+            `${colors.secondary}10`,
+            `${colors.accent}08`,
+          ]}
+          locations={[0, 0.3, 0.7, 1]}
+          style={styles.backgroundGradient}
+        />
+
+        {/* Decorative Elements */}
+        <View style={styles.decorativeElements}>
+          <View style={[styles.musicNote, styles.musicNote1]}>
+            <IconSymbol name="music.note" size={40} color={`${colors.primary}20`} />
+          </View>
+          <View style={[styles.musicNote, styles.musicNote2]}>
+            <IconSymbol name="music.note" size={60} color={`${colors.secondary}15`} />
+          </View>
+          <View style={[styles.musicNote, styles.musicNote3]}>
+            <IconSymbol name="waveform" size={50} color={`${colors.accent}18`} />
+          </View>
+          <View style={[styles.musicNote, styles.musicNote4]}>
+            <IconSymbol name="music.note.list" size={45} color={`${colors.primary}12`} />
+          </View>
+        </View>
+
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <View style={styles.searchInputContainer}>
@@ -246,12 +275,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  backgroundGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  decorativeElements: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    pointerEvents: 'none',
+  },
+  musicNote: {
+    position: 'absolute',
+    opacity: 0.3,
+  },
+  musicNote1: {
+    top: 100,
+    left: 20,
+    transform: [{ rotate: '-15deg' }],
+  },
+  musicNote2: {
+    top: 250,
+    right: 30,
+    transform: [{ rotate: '20deg' }],
+  },
+  musicNote3: {
+    bottom: 200,
+    left: 40,
+    transform: [{ rotate: '10deg' }],
+  },
+  musicNote4: {
+    bottom: 100,
+    right: 50,
+    transform: [{ rotate: '-25deg' }],
+  },
   searchContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
-    backgroundColor: colors.background,
+    backgroundColor: 'transparent',
     gap: 8,
+    zIndex: 10,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -261,6 +330,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
     gap: 8,
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.4)',
+    elevation: 5,
   },
   searchInput: {
     flex: 1,
@@ -277,6 +348,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     gap: 8,
+    boxShadow: '0px 4px 12px rgba(255, 64, 129, 0.4)',
+    elevation: 5,
   },
   searchButtonDisabled: {
     opacity: 0.6,
@@ -288,6 +361,7 @@ const styles = StyleSheet.create({
   },
   historyContainer: {
     paddingVertical: 8,
+    zIndex: 10,
   },
   historyTitle: {
     fontSize: 12,
@@ -310,6 +384,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 16,
     gap: 6,
+    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.3)',
+    elevation: 3,
   },
   historyItemText: {
     fontSize: 14,
@@ -321,6 +397,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    zIndex: 10,
   },
   resultsCount: {
     fontSize: 14,
@@ -340,6 +417,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    zIndex: 10,
   },
   listContainer: {
     paddingHorizontal: 16,
